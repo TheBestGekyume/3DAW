@@ -45,7 +45,7 @@
         }
 
         h2 {
-            margin-top:10px ;
+            margin-top: 10px;
         }
 
         button,
@@ -71,21 +71,30 @@
             </div>
 
             <div>
-                <label for="op">Selecione a operação</label>
+                <label for="op">Operação</label>
                 <select name="op" required>
                     <option value="+">+</option>
                     <option value="-">-</option>
                     <option value="*">*</option>
                     <option value="/">/</option>
+                    <option value="sqrt">Raiz Quadrada</option>
+                    <option value="**">Potencia</option>
+                    <option value="inverterSinal">Inverter Sinal</option>
+                    <option value="inverterNumero">Inverter Numero</option>
+                    <option value="seno">Seno</option>
+                    <option value="cosseno">Cosseno</option>
+                    <option value="tangente">Tangente</option>
+                    <option value="!">Fatorial</option>
+
                 </select>
             </div>
 
             <div>
                 <label for="n2">Numero 2</label>
-                <input type="number" name="n2" value="n2" required>
+                <input type="number" name="n2" value="n2">
             </div>
 
-            
+
             <div>
                 <button type="submit">Calcular</button>
             </div>
@@ -117,6 +126,47 @@
                 } else {
                     $result = "Divisão por zero não permitida!";
                 }
+                break;
+
+            case '**':
+                $result = $n1 ** $n2;
+                break;
+
+            case 'sqrt':
+                $result = sqrt($n1);
+                break;
+
+            case 'inverterSinal':
+                $result = $n1 * -1;
+                break;
+
+            case 'inverterNumero':
+                $result = 1 / $n1;
+                break;
+
+            case 'seno':
+                $result = sin($n1);
+                break;
+
+            case 'cosseno':
+                $result = cos($n1);
+                break;
+
+            case 'tangente':
+                $result = tan($n1);
+                break;
+
+            case '!':
+                $result = 1;
+
+                for ($i = $n1; $i >= 1; $i--) {
+                    $result *= $i;
+                }
+
+                break;
+
+            default:
+                $result = "Operação inválida";
                 break;
         }
 
