@@ -41,21 +41,21 @@
         <th>Carga</th>
     </tr>
 <?php
-    $arqDisc = fopen("disciplinas.txt", "r") or die("Erro ao abrir o arquivo");
-    
-    fgets($arqDisc);
+    $file = fopen("disciplinas.txt", "r") or die("Erro ao abrir o arquivo");
 
-    while (($linha = fgets($arqDisc)) !== false) {
+    fgets($file);
+
+    while (($linha = fgets($file))) {
         $colunaDados = explode(",", trim($linha));
 
         if (count($colunaDados) === 3) {
-            echo "<tr><td>" . htmlspecialchars($colunaDados[0]) . "</td>" .
-                "<td>" . htmlspecialchars($colunaDados[1]) . "</td>" .
-                "<td>" . htmlspecialchars($colunaDados[2]) . "</td></tr>";
+            echo "<tr><td>" . $colunaDados[0] . "</td>" .
+                "<td>" . $colunaDados[1] . "</td>" .
+                "<td>" . $colunaDados[2] . "</td></tr>";
         }
     }
 
-    fclose($arqDisc);
+    fclose($file);
 ?>
 </table>
 
