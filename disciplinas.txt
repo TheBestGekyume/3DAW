@@ -1,4 +1,4 @@
 Nome,Sigla,Carga
+Disciplina,1DIS,40
 Fundamentos de Redes e Sistemas Distribuídos,3RSD,80
 Fundamentos de Programação,2FPR,80
-teste,5TST,40

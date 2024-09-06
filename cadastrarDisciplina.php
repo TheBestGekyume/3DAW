@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <main>
         <h1>Criar Nova Disciplina</h1>
-        <form action="ex03_IncluirDisciplina.php" method="POST">
+        <form action="cadastrarDisciplina.php" method="POST">
             <div>
                 <h3>Nome:</h3>
                 <input type="text" name="nome" required>
