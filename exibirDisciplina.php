@@ -36,33 +36,25 @@
 <h1>Listar Disciplinas</h1>
 <table>
     <tr>
-        <th>ID</th>
         <th>Nome</th>
         <th>Sigla</th>
-        <th>Carga Horária</th>
+        <th>Carga</th>
     </tr>
 <?php
-    // Abre o arquivo para leitura
     $file = fopen("disciplinas.txt", "r") or die("Erro ao abrir o arquivo");
 
-    // Ignora a primeira linha (cabeçalho)
     fgets($file);
 
-    // Lê cada linha do arquivo
     while (($linha = fgets($file))) {
-        // Remove espaços em branco e separa os dados por vírgula
         $colunaDados = explode(",", trim($linha));
 
-        // Verifica se há 4 colunas (ID, Nome, Sigla, Carga Horária)
-        if (count($colunaDados) === 4) {
-            echo "<tr><td>" . $colunaDados[0] . "</td>" . // ID
-                "<td>" . $colunaDados[1] . "</td>" .     // Nome
-                "<td>" . $colunaDados[2] . "</td>" .     // Sigla
-                "<td>" . $colunaDados[3] . "</td></tr>"; // Carga Horária
+        if (count($colunaDados) === 3) {
+            echo "<tr><td>" . $colunaDados[0] . "</td>" .
+                "<td>" . $colunaDados[1] . "</td>" .
+                "<td>" . $colunaDados[2] . "</td></tr>";
         }
     }
 
-    // Fecha o arquivo
     fclose($file);
 ?>
 </table>
