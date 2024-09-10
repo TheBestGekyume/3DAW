@@ -1,39 +1,26 @@
 <?php
+// Função para buscar os dados de uma disciplina pelo ID
+function buscarDisciplina($id) {
+    $file = "disciplinas.txt";
+    if (!file_exists($file)) {
+        return false;
+    }
 
-function verificarDados($sigla, $carga){
-
-    $padrao = "/^[1-5][A-Z]{3}$/";
-
-    if (preg_match($padrao, $sigla) && ($carga == 40 || $carga == 80)) return true;
-
+    $disciplinas = file($file);
+    foreach ($disciplinas as $linha) {
+        $dados = explode(",", $linha);
+        if ((int)$dados[0] === $id) {
+            return $dados;
+        }
+    }
     return false;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    $nome = $_POST["nome"];
-    $sigla = $_POST["sigla"];
-    $carga = $_POST["carga"];
-
-    if (verificarDados($sigla, $carga)) {
-
-        if (!file_exists("disciplinas.txt")) {
-            $arqDisc = fopen("disciplinas.txt", "w") or die("Erro ao criar o arquivo");
-            $linha = "Nome,Sigla,Carga\n";
-            fwrite($arqDisc, $linha);
-            fclose($arqDisc);
-        }
-
-        $arqDisc = fopen("disciplinas.txt", "a") or die("Erro ao abrir o arquivo");
-        $linha = $nome . "," . $sigla . "," . $carga . "\n";
-        fwrite($arqDisc, $linha);
-        fclose($arqDisc);
-        echo "<script> alert('Disciplina Cadastrada'); </script>";
-    } else {
-        echo "<script> alert('ERROR'); </script>";
-    }
+// Verifica se um ID foi passado via GET
+if (isset($_GET['id'])) {
+    $id = (int)$_GET['id'];
+    $dadosDisciplina = buscarDisciplina($id);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -41,8 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <head>
     <meta charset="UTF-8">
-    <title>Criar Nova Disciplina</title>
-
+    <title>Editar Disciplina</title>
     <style>
         body {
             background-color: #222;
@@ -76,33 +62,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #54d;
         }
     </style>
-
 </head>
 
 <body>
-
     <main>
-        <h1>Criar Nova Disciplina</h1>
-        <form action="cadastrarDisciplina.php" method="POST">
+        <h1>Editar Disciplina</h1>
+        <?php if ($dadosDisciplina): ?>
+        <form action="atualizarDisciplina.php" method="POST">
+            <input type="hidden" name="id" value="<?php echo $dadosDisciplina[0]; ?>">
             <div>
                 <h3>Nome:</h3>
-                <input type="text" name="nome" required>
+                <input type="text" name="nome" value="<?php echo $dadosDisciplina[1]; ?>" required>
             </div>
-
             <div>
                 <h3>Sigla:</h3>
-                <input type="text" name="sigla" required>
+                <input type="text" name="sigla" value="<?php echo $dadosDisciplina[2]; ?>" required>
             </div>
-
             <div>
-                <h3>Carga Horaria:</h3>
-                <input type="number" name="carga" required>
+                <h3>Carga Horária:</h3>
+                <input type="number" name="carga" value="<?php echo $dadosDisciplina[3]; ?>" required>
             </div>
-
-            <button type="submit">Criar Nova Disciplina</button>
+            <button type="submit">Atualizar Disciplina</button>
         </form>
+        <?php else: ?>
+        <p>Disciplina não encontrada.</p>
+        <?php endif; ?>
     </main>
-
 </body>
 
 </html>

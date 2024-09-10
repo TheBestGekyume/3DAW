@@ -1,6 +1,1 @@
-Nome,Sigla,Carga
-Disciplina,1DIS,40
-Fundamentos de Redes e Sistemas Distribuídos,3RSD,80
-Fundamentos de Programação,2FPR,80
-TOOOOM,4ROL,40
-X,5MMM,40
+6,JOOOJ,3GOS,80
