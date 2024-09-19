@@ -2,79 +2,91 @@
 $cpf = $nome = $matricula = $dataDeNascimento = $msg = "";
 $buscarCPF = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Verificar se a solicitação foi para buscar o aluno ou para alterar os dados
-    if (isset($_POST['buscar'])) {
-        $buscarCPF = trim($_POST['buscarCPF']);
 
-        // Verificar se o arquivo existe
-        if (file_exists("alunos.txt")) {
-            $arqAlunos = fopen("alunos.txt", "r");
+function buscarAlunoPorCpf($cpfBuscado){
 
-            // Procurar o aluno pelo CPF
-            while (!feof($arqAlunos)) {
-                $linha = fgets($arqAlunos);
-                if ($linha != "") {
-                    $colunaDados = explode(";", $linha);
-                    if (trim($colunaDados[1]) == $buscarCPF) {
-                        $nome = $colunaDados[0];
-                        $cpf = $colunaDados[1];
-                        $matricula = $colunaDados[2];
-                        $dataDeNascimento = trim($colunaDados[3]);
-                        break;
-                    }
-                }
+    if (!file_exists("alunos.txt")) return null;
+
+    $file = fopen("alunos.txt", "r");
+    while (!feof($file)) {
+        $linha = fgets($file);
+        if ($linha != "") {
+            $dados = explode(";", $linha);
+            if (($dados[1]) == $cpfBuscado) {
+                fclose($file);
+
+                $dataConvertida = DateTime::createFromFormat('d/m/Y', trim($dados[3]))->format('Y-m-d');
+
+                return [
+                    'nome' => $dados[0],
+                    'cpf' => $dados[1],
+                    'matricula' => $dados[2],
+                    'dataDeNascimento' => $dataConvertida// Usar a data convertida
+                ];
             }
-            fclose($arqAlunos);
-
-            // Verificar se encontrou o CPF
-            if ($cpf == "") {
-                $msg = "CPF não encontrado!";
-            }
-        } else {
-            $msg = "Arquivo de alunos não encontrado!";
         }
-    } elseif (isset($_POST['alterar'])) {
-        // Ação de alterar o aluno
+    }
+    fclose($file);
+    return null;
+}
+
+
+function alterarAluno($nome, $cpf, $matricula, $dataDeNascimento){
+
+    if (!file_exists("alunos.txt")) {
+        return "Arquivo de alunos não encontrado!";
+    }
+
+    $file = fopen("alunos.txt", "r");
+    $fileNovo = fopen("alunos_temp.txt", "w");
+    $dataDeNascimento = date("d/m/Y", strtotime($dataDeNascimento));
+
+    while (!feof($file)) {
+        $linha = fgets($file);
+        if ($linha != "") {
+            $dados = explode(";", $linha);
+            if (($dados[1]) == $cpf) {
+                $linha = $nome . ";" . $cpf . ";" . $matricula . ";" . $dataDeNascimento . "\n";
+            }
+            fwrite($fileNovo, $linha);
+        }
+    }
+
+    fclose($file);
+    fclose($fileNovo);
+    rename("alunos_temp.txt", "alunos.txt");
+
+    return "Dados do aluno alterados com sucesso!";
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if (isset($_POST['buscar'])) {
+        $buscarCPF = $_POST['buscarCPF'];
+        $aluno = buscarAlunoPorCpf($buscarCPF);
+
+        if ($aluno) {
+            $nome = $aluno['nome'];
+            $cpf = $aluno['cpf'];
+            $matricula = $aluno['matricula'];
+            $dataDeNascimento = $aluno['dataDeNascimento'];
+        } else {
+            $msg = "CPF não encontrado!";
+        }
+    } else if (isset($_POST['alterar'])) {
         $cpf = $_POST["CPFAluno"];
         $nome = $_POST["nomeAluno"];
         $matricula = $_POST["matriculaAluno"];
         $dataDeNascimento = $_POST["dataNascAluno"];
-        $msg = "";
 
-        if (file_exists("alunos.txt")) {
-            $arqAlunos = fopen("alunos.txt", "r");
-            $arqAlunosNovo = fopen("alunos_temp.txt", "w");
-
-            while (!feof($arqAlunos)) {
-                $linha = fgets($arqAlunos);
-                if ($linha != "") {
-                    $colunaDados = explode(";", $linha);
-
-                    // Comparar o CPF após aplicar trim
-                    if (trim($colunaDados[1]) == $cpf) {
-                        $linha = $nome . ";" . $cpf . ";" . $matricula . ";" . $dataDeNascimento . "\n";
-                    }
-                    fwrite($arqAlunosNovo, $linha);
-                }
-            }
-
-            fclose($arqAlunos);
-            fclose($arqAlunosNovo);
-
-            // Substituir o arquivo original
-            rename("alunos_temp.txt", "alunos.txt");
-
-            $msg = "Dados do aluno alterados com sucesso!";
-        } else {
-            $msg = "Arquivo de alunos não encontrado!";
-        }
+        $msg = alterarAluno($nome, $cpf, $matricula, $dataDeNascimento);
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Alterar Aluno</title>
@@ -134,24 +146,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     </style>
 </head>
+
 <body>
     <h1>Alterar Aluno</h1>
 
-    <!-- Formulário para buscar o aluno -->
     <form action="alterarAluno.php" method="POST">
         <label for="buscarCPF">Buscar pelo CPF</label>
         <input id="buscarCPF" type="number" name="buscarCPF" value='<?php echo $buscarCPF ?>' required>
-        <button type="submit" name="buscar">Buscar Aluno</button>
+        <button type="submit" name="buscar" value="buscar">Buscar Aluno</button>
     </form>
 
-    <!-- Mostrar o formulário para alterar dados se o CPF foi encontrado -->
     <?php if ($cpf): ?>
         <form action="alterarAluno.php" method="POST">
             <label for="nomeAluno">Nome</label>
             <input id="nomeAluno" type="text" name="nomeAluno" value='<?php echo $nome ?>' required>
 
             <label for="CPFAluno">CPF</label>
-            <input id="CPFAluno" type="text" name="CPFAluno" value='<?php echo $cpf ?>' readonly required>
+            <input id="CPFAluno" type="text" name="CPFAluno" value='<?php echo $cpf ?>' readonly>
 
             <label for="matriculaAluno">Matrícula</label>
             <input id="matriculaAluno" type="number" name="matriculaAluno" value='<?php echo $matricula ?>' required>
@@ -159,15 +170,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <label for="dataNascAluno">Data de Nascimento</label>
             <input id="dataNascAluno" type="date" name="dataNascAluno" value='<?php echo $dataDeNascimento ?>' required>
 
-            <button type="submit" name="alterar">Alterar Aluno</button>
+            <button type="submit" name="alterar" value="alterar">Alterar Aluno</button>
         </form>
     <?php endif; ?>
 
     <p><?php echo $msg ?></p>
 
     <ul>
-        <li><a href="criarAluno.php" target="_blank"> <button>Incluir Aluno</button></a></li>
-        <li><a href="listarAlunos.php" target="_blank"> <button>Listar Alunos</button></a></li>
+        <li>
+            <a href="criarAluno.php" target="_blank"> <button>Incluir Aluno</button></a>
+        </li>
+        <li>
+            <a href="listarAlunos.php" target="_blank"> <button>Listar Alunos</button></a>
+        </li>
+        <li>
+            <a href="excluirAluno.php" target="_blank"> <button> Excluir Aluno</button></a>
+        </li>
+        <li>
+            <a href="exibirAluno.php" target="_blank"> <button> Exibir Aluno</button></a>
+        </li>
     </ul>
 </body>
+
 </html>

@@ -6,6 +6,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $dataDeNascimento = $_POST["dataNascAluno"];
     $msg = "";
 
+    $dataDeNascimento = date("d/m/Y", strtotime($dataDeNascimento));               
+
     if (!file_exists("alunos.txt")) {
         $file = fopen("alunos.txt", "w") or die("erro ao criar arquivo");
         $linha = "nome;cpf;matricula;data\n";
@@ -17,7 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $linha =  $nome . ";" . $cpf . ";" . $matricula . ";" . $dataDeNascimento . "\n";
     fwrite($file, $linha);
     fclose($file);
-    $msg = "<script> alert('Aluno Cadastrado')</script>";
+    $msg = "Aluno Cadastrado!";
+}else{
+    $msg = "Error!";
 }
 ?>
 
@@ -130,6 +134,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </li>
         <li>
             <a href="alterarAluno.php" target="_blank"> <button> Alterar Aluno</button></a>
+        </li>
+        <li>
+            <a href="excluirAluno.php" target="_blank"> <button> Excluir Aluno</button></a>
+        </li>
+        <li>
+            <a href="exibirAluno.php" target="_blank"> <button> Exibir Aluno</button></a>
         </li>
     </ul>
 

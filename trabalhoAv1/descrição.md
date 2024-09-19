@@ -1,5 +1,5 @@
 # CRUD de Alunos
----
+
 ### Cada Aluno tem os seguintes atributos:
 - Nome
 - CPF
