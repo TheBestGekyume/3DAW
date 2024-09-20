@@ -1,10 +1,9 @@
 <?php
-// Inicialização das variáveis
+
 $cpf = "";
 $aluno = null;
 $msg = "";
 
-// Função para buscar aluno por CPF
 function buscarAlunoPorCpf($cpfBuscado) {
     if (!file_exists("alunos.txt")) return null;
 
@@ -16,7 +15,6 @@ function buscarAlunoPorCpf($cpfBuscado) {
             if ($dados[1] === $cpfBuscado) {
                 fclose($file);
 
-                // Retorna os dados do aluno encontrados
                 return [
                     'nome' => $dados[0],
                     'cpf' => $dados[1],
@@ -30,7 +28,6 @@ function buscarAlunoPorCpf($cpfBuscado) {
     return null;
 }
 
-// Processamento do formulário
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cpf = $_POST["CPFAluno"];
     $aluno = buscarAlunoPorCpf($cpf);

@@ -7,7 +7,7 @@
 - Data de dascimento
 ---
 ### Funcionalidades do CRUD:
-- Incluir
+- incluir
 - alterar
 - excluir
 - listar um 
