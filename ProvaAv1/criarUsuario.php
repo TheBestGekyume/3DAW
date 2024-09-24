@@ -1,25 +1,23 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome = $_POST["nomeUsuario"];
-    $email = $_POST["emailUsuario"];
-    $cpf = $_POST["CPFUsuario"];
-    $dataDeNascimento = $_POST["dataNascUsuario"];
+    $login = $_POST["loginUsuario"];
+    $senha = $_POST["senhaUsuario"];
     $msg = "";
 
-    if (strlen($cpf) != 11) {
-        $msg = "O CPF deve conter exatamente 11 dígitos!";
+    if (strlen($login) < 5) {
+        $msg = "O login deve ter pelo menos 5 caracteres!";
+    } elseif (strlen($senha) < 8) {
+        $msg = "A senha deve ter pelo menos 8 caracteres!";
     } else {
-        $dataDeNascimento = date("d/m/Y", strtotime($dataDeNascimento));
-
         if (!file_exists("usuarios.txt")) {
             $file = fopen("usuarios.txt", "w") or die("Erro ao criar arquivo");
-            $linha = "nome;email;cpf;data\n";
+            $linha = "login;senha\n";
             fwrite($file, $linha);
             fclose($file);
         }
 
         $file = fopen("usuarios.txt", "a") or die("Erro ao abrir arquivo");
-        $linha = $nome . ";" . $email . ";" . $cpf . ";" . $dataDeNascimento . "\n";
+        $linha = $login . ";" . $senha . "\n";
         fwrite($file, $linha);
         fclose($file);
         $msg = "Usuário cadastrado com sucesso!";
@@ -72,41 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #000;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table,
-        th,
-        td {
-            border: 1px solid #ddd;
-        }
-
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #333;
-        }
-
         form {
             display: flex;
             flex-direction: column;
-        }
-
-        ul {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 2rem;
-        }
-
-        li {
-            list-style: none;
         }
     </style>
 </head>
@@ -115,23 +81,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <h1>Criar Usuário</h1>
     <form action="criarUsuario.php" method="POST">
 
-        <label for="nomeUsuario">Nome</label>
-        <input id="nomeUsuario" type="text" name="nomeUsuario" required>
+        <label for="loginUsuario">Login</label>
+        <input id="loginUsuario" type="text" name="loginUsuario" required>
 
-        <label for="emailUsuario">E-mail</label>
-        <input id="emailUsuario" type="email" name="emailUsuario" required>
-
-        <label for="CPFUsuario">CPF</label>
-        <input id="CPFUsuario" type="number" name="CPFUsuario" required>
-
-        <label for="dataNascUsuario">Data de Nascimento</label>
-        <input id="dataNascUsuario" type="date" name="dataNascUsuario" required>
+        <label for="senhaUsuario">Senha</label>
+        <input id="senhaUsuario" type="password" name="senhaUsuario" required>
 
         <button type="submit">Enviar</button>
     </form>
     <?php if ($_SERVER['REQUEST_METHOD'] == 'POST') echo $msg ?>
-
-
 </body>
 
 </html>
