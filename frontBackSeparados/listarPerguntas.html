@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Perguntas</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #111;
+        }
+
+        tr:nth-child(even) {
+            background-color: #444;
+        }
+
+        tr:hover {
+            background-color: #336;
+        }
+
+        button, a {
+            padding: 10px 20px;
+            background-color: #34d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        button:hover, a:hover {
+            background-color: #54d;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 20px;
+        }
+
+        .actions li {
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Lista de Perguntas</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id Pergunta</th>
+                    <th>Pergunta</th>
+                    <th>Resposta A</th>
+                    <th>Resposta B</th>
+                    <th>Resposta C</th>
+                    <th>Resposta D</th>
+                    <th>Resposta Correta</th>
+                </tr>
+            </thead>
+            <tbody id="listaPerguntas"></tbody>
+        </table>
+
+        <ul class="actions">
+            <li><a target="_blank" href="criarPergunta.html">Incluir Pergunta</a></li>
+            <li><a target="_blank" href="alterarPerguntas.html">Alterar Pergunta</a></li>
+            <li><a target="_blank" href="excluirPerguntas.html">Excluir Pergunta</a></li>
+            <li><a target="_blank" href="exibirPergunta.html">Exibir Pergunta</a></li>
+        </ul>
+    </main>
+
+    <script>
+        function carregarPerguntas() {
+            const xmlhttp = new XMLHttpRequest();
+            xmlhttp.open('GET', 'listarPerguntas.php', true);
+
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    const perguntas = JSON.parse(xmlhttp.responseText);
+                    const tabela = document.getElementById('listaPerguntas');
+                    
+                    perguntas.forEach(pergunta => {
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${pergunta.IdPergunta}</td>
+                            <td>${pergunta.tituloPergunta}</td>
+                            <td>${pergunta.respostaA}</td>
+                            <td>${pergunta.respostaB}</td>
+                            <td>${pergunta.respostaC}</td>
+                            <td>${pergunta.respostaD}</td>
+                            <td>${pergunta.respostaCorreta}</td>
+                        `;
+
+                        tabela.appendChild(row);
+                    });
+                } else if (xmlhttp.readyState === 4) {
+                    alert("Erro ao carregar perguntas.");
+                }
+            };
+
+            xmlhttp.send();
+        }
+
+        window.onload = carregarPerguntas;
+    </script>
+</body>
+</html>
