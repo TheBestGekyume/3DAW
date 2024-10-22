@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Pergunta</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        main {
+            padding-inline-start: 15px;
+        }
+
+        div:last-of-type {
+            margin-bottom: 20px;
+        }
+
+        button, input {
+            max-width: fit-content;
+            padding: 5px 10px;
+            background-color: #9df;
+            font-size: 16px;
+            border: 1px solid blue;
+            border-radius: 6px;
+            margin-block: 5px 25px;
+        }
+
+        button {
+            padding: 8px 25px;
+            background-color: #34d;
+            color: #fff;
+            cursor: pointer;
+            transition: 300ms;
+        }
+
+        button:hover {
+            background-color: #54d;
+            color: #000;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        ul {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Alterar Pergunta</h1>
+
+    <form id="formBuscar">
+        <label for="buscarID">Buscar pelo ID da Pergunta</label>
+        <input id="buscarID" type="number" name="buscarID" required>
+        <button type="submit">Buscar Pergunta</button>
+    </form>
+
+    <form id="formAlterar" style="display:none">
+        <label for="IdPergunta">Id da Pergunta</label>
+        <input id="IdPergunta" type="number" name="IdPergunta" readonly>
+
+        <label for="tituloPergunta">Título da Pergunta</label>
+        <input id="tituloPergunta" type="text" name="tituloPergunta" required>
+
+        <label for="respostaA">Resposta A</label>
+        <input id="respostaA" type="text" name="respostaA" required>
+
+        <label for="respostaB">Resposta B</label>
+        <input id="respostaB" type="text" name="respostaB" required>
+
+        <label for="respostaC">Resposta C</label>
+        <input id="respostaC" type="text" name="respostaC" required>
+
+        <label for="respostaD">Resposta D</label>
+        <input id="respostaD" type="text" name="respostaD" required>
+
+        <label for="respostaCorreta">Resposta Correta</label>
+        <input id="respostaCorreta" type="text" name="respostaCorreta" required>
+
+        <button type="submit">Alterar Pergunta</button>
+    </form>
+
+    <p id="mensagem"></p>
+
+    <script>
+        const formBuscar = document.getElementById('formBuscar');
+        const formAlterar = document.getElementById('formAlterar');
+        const mensagem = document.getElementById('mensagem');
+
+        formBuscar.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const buscarID = document.getElementById('buscarID').value;
+            const response = await fetch('alterarPerguntas.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ buscar: true, buscarID })
+            });
+
+            const result = await response.json();
+            if (result.status === 'success') {
+                formAlterar.style.display = 'block';
+                document.getElementById('IdPergunta').value = result.data.IdPergunta;
+                document.getElementById('tituloPergunta').value = result.data.TituloPergunta;
+                document.getElementById('respostaA').value = result.data.RespostaA;
+                document.getElementById('respostaB').value = result.data.RespostaB;
+                document.getElementById('respostaC').value = result.data.RespostaC;
+                document.getElementById('respostaD').value = result.data.RespostaD;
+                document.getElementById('respostaCorreta').value = result.data.RespostaCorreta;
+                mensagem.textContent = '';
+            } else {
+                mensagem.textContent = result.message;
+                formAlterar.style.display = 'none';
+            }
+        });
+
+        formAlterar.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const IdPergunta = document.getElementById('IdPergunta').value;
+            const tituloPergunta = document.getElementById('tituloPergunta').value;
+            const respostaA = document.getElementById('respostaA').value;
+            const respostaB = document.getElementById('respostaB').value;
+            const respostaC = document.getElementById('respostaC').value;
+            const respostaD = document.getElementById('respostaD').value;
+            const respostaCorreta = document.getElementById('respostaCorreta').value;
+
+            const response = await fetch('alterarPerguntas.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ alterar: true, IdPergunta, tituloPergunta, respostaA, respostaB, respostaC, respostaD, respostaCorreta })
+            });
+
+            const result = await response.json();
+            mensagem.textContent = result.message;
+        });
+    </script>
+</body>
+</html>

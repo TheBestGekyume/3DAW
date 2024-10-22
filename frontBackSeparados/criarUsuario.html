@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Usuário</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        main {
+            padding-inline-start: 15px;
+        }
+
+        div:last-of-type {
+            margin-bottom: 20px;
+        }
+
+        button, input {
+            max-width: fit-content;
+            padding: 5px 10px;
+            background-color: #9df;
+            font-size: 16px;
+            border: 1px solid blue;
+            border-radius: 6px;
+            margin-block: 5px 25px;
+        }
+
+        button {
+            padding: 8px 25px;
+            background-color: #34d;
+            color: #fff;
+            cursor: pointer;
+            transition: 300ms;
+        }
+
+        button:hover {
+            background-color: #54d;
+            color: #000;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Criar Usuário</h1>
+    <form id="formUsuario">
+        <label for="loginUsuario">Login</label>
+        <input id="loginUsuario" type="text" name="loginUsuario" required>
+
+        <label for="senhaUsuario">Senha</label>
+        <input id="senhaUsuario" type="password" name="senhaUsuario" required>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <p id="mensagem"></p>
+
+    <script>
+        document.getElementById('formUsuario').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const loginUsuario = document.getElementById('loginUsuario').value;
+            const senhaUsuario = document.getElementById('senhaUsuario').value;
+
+            const response = await fetch('criarUsuario.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ loginUsuario, senhaUsuario })
+            });
+
+            const result = await response.json();
+            const mensagem = document.getElementById('mensagem');
+
+            if (result.status === 'success') {
+                mensagem.textContent = result.message;
+                mensagem.style.color = 'green';
+            } else {
+                mensagem.textContent = result.message;
+                mensagem.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
