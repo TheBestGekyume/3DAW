@@ -89,10 +89,13 @@
     <div id="resultado"></div>
 
     <ul>
-        <li><a href="criarPergunta.php" target="_blank"><button>Criar Perguntas</button></a></li>
-        <li><a href="listarPerguntas.php" target="_blank"><button>Lista de Perguntas</button></a></li>
-        <li><a href="alterarPerguntas.php" target="_blank"><button>Alterar Perguntas</button></a></li>
-        <li><a href="excluirPerguntas.php" target="_blank"><button>Excluir Perguntas</button></a></li>
+        <li><a href="../criarPergunta/criarPergunta.html" target="_blank"><button>Criar Perguntas</button></a></li>
+        <li><a href="../listarPerguntas/listarPerguntas.html" target="_blank"><button>Lista de Perguntas</button></a>
+        </li>
+        <li><a href="../alterarPergunta/alterarPergunta.html" target="_blank"><button>Alterar Perguntas</button></a>
+        </li>
+        <li><a href="../excluirPergunta/excluirPerguntas.html" target="_blank"><button>Excluir Perguntas</button></a>
+        </li>
     </ul>
 
     <script>
@@ -107,26 +110,31 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.msg) {
-                    resultado.innerHTML = `<p>${data.msg}</p>`;
-                } else if (data.pergunta) {
-                    const { IdPergunta, TituloPergunta, RespostaA, RespostaB, RespostaC, RespostaD, RespostaCorreta } = data.pergunta;
-                    resultado.innerHTML = `
-                        <table>
-                            <tr><th>ID da Pergunta</th><td>${IdPergunta}</td></tr>
-                            <tr><th>Título da Pergunta</th><td>${TituloPergunta}</td></tr>
-                            <tr><th>Resposta A</th><td>${RespostaA}</td></tr>
-                            <tr><th>Resposta B</th><td>${RespostaB}</td></tr>
-                            <tr><th>Resposta C</th><td>${RespostaC}</td></tr>
-                            <tr><th>Resposta D</th><td>${RespostaD}</td></tr>
-                            <tr><th>Resposta Correta</th><td>${RespostaCorreta}</td></tr>
-                        </table>
-                    `;
-                }
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.msg) {
+                        resultado.innerHTML = `<p>${data.msg}</p>`;
+                    } else if (data.pergunta) {
+                        const { IdPergunta, TituloPergunta, RespostaA, RespostaB, RespostaC, RespostaD, RespostaCerta } = data.pergunta;
+                        resultado.innerHTML = `
+                <table>
+                    <tr><th>ID da Pergunta</th><td>${IdPergunta}</td></tr>
+                    <tr><th>Título da Pergunta</th><td>${TituloPergunta}</td></tr>
+                    <tr><th>Resposta A</th><td>${RespostaA}</td></tr>
+                    <tr><th>Resposta B</th><td>${RespostaB}</td></tr>
+                    <tr><th>Resposta C</th><td>${RespostaC}</td></tr>
+                    <tr><th>Resposta D</th><td>${RespostaD}</td></tr>
+                    <tr><th>Resposta Certa</th><td>${RespostaCerta}</td></tr>
+                </table>
+            `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    resultado.innerHTML = `<p>Ocorreu um erro ao buscar a pergunta.</p>`;
+                });
         });
+
     </script>
 </body>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,7 +28,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 12px;
             text-align: left;
             border: 1px solid #ddd;
@@ -45,7 +47,8 @@
             background-color: #336;
         }
 
-        button, a {
+        button,
+        a {
             padding: 10px 20px;
             background-color: #34d;
             color: #fff;
@@ -56,7 +59,8 @@
             transition: background-color 0.3s;
         }
 
-        button:hover, a:hover {
+        button:hover,
+        a:hover {
             background-color: #54d;
         }
 
@@ -72,6 +76,7 @@
         }
     </style>
 </head>
+
 <body>
     <main>
         <h1>Lista de Perguntas</h1>
@@ -84,17 +89,17 @@
                     <th>Resposta B</th>
                     <th>Resposta C</th>
                     <th>Resposta D</th>
-                    <th>Resposta Correta</th>
+                    <th>Resposta Certa</th>
                 </tr>
             </thead>
             <tbody id="listaPerguntas"></tbody>
         </table>
 
         <ul class="actions">
-            <li><a target="_blank" href="criarPergunta.html">Incluir Pergunta</a></li>
-            <li><a target="_blank" href="alterarPerguntas.html">Alterar Pergunta</a></li>
-            <li><a target="_blank" href="excluirPerguntas.html">Excluir Pergunta</a></li>
-            <li><a target="_blank" href="exibirPergunta.html">Exibir Pergunta</a></li>
+            <li><a target="_blank" href="../criarPergunta/criarPergunta.html">Incluir Pergunta</a></li>
+            <li><a target="_blank" href="../alterarPergunta/alterarPergunta.html">Alterar Pergunta</a></li>
+            <li><a target="_blank" href="../excluirPergunta/excluirPerguntas.html">Excluir Pergunta</a></li>
+            <li><a target="_blank" href="../exibirPergunta/exibirPergunta.html">Exibir Pergunta</a></li>
         </ul>
     </main>
 
@@ -105,33 +110,55 @@
 
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-                    const perguntas = JSON.parse(xmlhttp.responseText);
-                    const tabela = document.getElementById('listaPerguntas');
-                    
-                    perguntas.forEach(pergunta => {
-                        const row = document.createElement('tr');
-                        
-                        row.innerHTML = `
+                    try {
+                        console.log("Resposta recebida: ", xmlhttp.responseText);
+
+                        if (isValidJSON(xmlhttp.responseText)) {
+                            const perguntas = JSON.parse(xmlhttp.responseText);
+                            const tabela = document.getElementById('listaPerguntas');
+
+                            perguntas.forEach(pergunta => {
+                                const row = document.createElement('tr');
+
+                                row.innerHTML = `
                             <td>${pergunta.IdPergunta}</td>
                             <td>${pergunta.tituloPergunta}</td>
                             <td>${pergunta.respostaA}</td>
                             <td>${pergunta.respostaB}</td>
                             <td>${pergunta.respostaC}</td>
                             <td>${pergunta.respostaD}</td>
-                            <td>${pergunta.respostaCorreta}</td>
+                            <td>${pergunta.respostaCerta}</td>
                         `;
 
-                        tabela.appendChild(row);
-                    });
+                                tabela.appendChild(row);
+                            });
+                        } else {
+                            console.error("Resposta não é um JSON válido.");
+                        }
+                    } catch (e) {
+                        console.error("Erro ao parsear JSON:", e);
+                    }
                 } else if (xmlhttp.readyState === 4) {
-                    alert("Erro ao carregar perguntas.");
+                    console.error("Erro ao carregar perguntas.");
                 }
             };
 
             xmlhttp.send();
         }
 
+        // Função para verificar se a resposta é um JSON válido
+        function isValidJSON(str) {
+            try {
+                JSON.parse(str);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
         window.onload = carregarPerguntas;
+
     </script>
 </body>
+
 </html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Pergunta</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        main {
+            padding-inline-start: 15px;
+        }
+
+        div:last-of-type {
+            margin-bottom: 20px;
+        }
+
+        button,
+        input {
+            max-width: fit-content;
+            padding: 5px 10px;
+            background-color: #9df;
+            font-size: 16px;
+            border: 1px solid blue;
+            border-radius: 6px;
+            margin-block: 5px 25px;
+        }
+
+        button {
+            padding: 8px 25px;
+            background-color: #34d;
+            color: #fff;
+            cursor: pointer;
+            transition: 300ms;
+        }
+
+        button:hover {
+            background-color: #54d;
+            color: #000;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        ul {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Alterar Pergunta</h1>
+
+    <form id="formBuscar">
+        <label for="buscarID">Buscar pelo ID da Pergunta</label>
+        <input id="buscarID" type="number" name="buscarID" required>
+        <button type="submit">Alterar Pergunta</button>
+    </form>
+
+    <form id="formAlterar" style="display:none">
+        <label for="IdPergunta">Id da Pergunta</label>
+        <input id="IdPergunta" type="number" name="IdPergunta" readonly>
+
+        <label for="tituloPergunta">Título da Pergunta</label>
+        <input id="tituloPergunta" type="text" name="tituloPergunta" required>
+
+        <label for="respostaA">Resposta A</label>
+        <input id="respostaA" type="text" name="respostaA" required>
+
+        <label for="respostaB">Resposta B</label>
+        <input id="respostaB" type="text" name="respostaB" required>
+
+        <label for="respostaC">Resposta C</label>
+        <input id="respostaC" type="text" name="respostaC" required>
+
+        <label for="respostaD">Resposta D</label>
+        <input id="respostaD" type="text" name="respostaD" required>
+
+        <label for="respostaCerta">Resposta Certa</label> <!-- Alteração aqui -->
+        <input id="respostaCerta" type="text" name="respostaCerta" required> <!-- Alteração aqui -->
+
+        <button type="submit">Alterar Pergunta</button>
+    </form>
+
+    <p id="mensagem"></p>
+
+    <ul>
+        <li>
+            <a href="../criarPergunta/criarPergunta.html" target="_blank"> <button>Criar Pergunta</button></a>
+        </li>
+        <li>
+            <a href="../listarPerguntas/listarPerguntas.html" target="_blank"> <button> Lista de Perguntas</button></a>
+        </li>
+        <li>
+            <a href="../excluirPergunta/excluirPerguntas.html" target="_blank"> <button> Excluir Perguntas</button></a>
+        </li>
+        <li>
+            <a href="../exibirPergunta/exibirPergunta.html" target="_blank"> <button> Exibir Pergunta por
+                    Id</button></a>
+        </li>
+    </ul>
+
+    <script>
+        document.getElementById('formBuscar').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const buscarID = document.getElementById('buscarID').value;
+
+            // Envia requisição para buscar a pergunta
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'alterarPergunta.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const result = JSON.parse(xhr.responseText);
+
+                    // Verifica se a pergunta foi encontrada
+                    if (result.status === 'success') {
+                        // Exibe o formulário de alteração
+                        document.getElementById('formAlterar').style.display = 'block';
+
+                        // Preenche os campos com os dados da pergunta
+                        document.getElementById('IdPergunta').value = result.data.IdPergunta;
+                        document.getElementById('tituloPergunta').value = result.data.TituloPergunta;
+                        document.getElementById('respostaA').value = result.data.RespostaA;
+                        document.getElementById('respostaB').value = result.data.RespostaB;
+                        document.getElementById('respostaC').value = result.data.RespostaC;
+                        document.getElementById('respostaD').value = result.data.RespostaD;
+                        document.getElementById('respostaCerta').value = result.data.RespostaCerta;
+
+                        document.getElementById('mensagem').textContent = ''; // Limpa mensagem de erro
+                    } else {
+                        document.getElementById('mensagem').textContent = result.message;
+                        document.getElementById('formAlterar').style.display = 'none'; // Esconde o formulário
+                    }
+                }
+            };
+            xhr.send(JSON.stringify({ buscar: true, buscarID }));
+        });
+
+        document.getElementById('formAlterar').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = {
+                idPergunta: document.getElementById('IdPergunta').value,
+                tituloPergunta: document.getElementById('tituloPergunta').value,
+                respostaA: document.getElementById('respostaA').value,
+                respostaB: document.getElementById('respostaB').value,
+                respostaC: document.getElementById('respostaC').value,
+                respostaD: document.getElementById('respostaD').value,
+                respostaCerta: document.getElementById('respostaCerta').value
+            };
+
+            // Envia a requisição de alteração
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'alterarPergunta.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const result = JSON.parse(xhr.responseText);
+                    document.getElementById('mensagem').textContent = result.message;
+                }
+            };
+            xhr.send(JSON.stringify({ alterar: true, ...formData }));
+        });
+
+    </script>
+</body>
+
+</html>
